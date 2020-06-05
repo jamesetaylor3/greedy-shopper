@@ -8,6 +8,20 @@ PyO3 requires nightly rust; consequently, greedy-shopper requires nightly rust. 
 
 `rustup toolchain install nightly`
 
-To set this project to use this nightly channel of rust, run this command. It won't affect any of your other projects.
+To set this project to use this nightly channel of rust, run this command in the project directory. It won't affect any of your other projects.
 
 `rustup toolchain set nightly`
+
+### Build
+
+To build the package, run the following command.
+
+`cargo build`
+
+Alternatively, to build an optimized build, run this.
+
+`cargo build --release`
+
+In the target directory, you will find either a debug or a release directory depending on the build you compiled. Inside that directory, find the file libshopper.dylib and rename it to shopper.so. Move the shopper.so file to where you need to use it and you can import the shared library in Python with
+
+`import shopper`
