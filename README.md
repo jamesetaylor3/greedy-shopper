@@ -25,3 +25,8 @@ Alternatively, to build an optimized build, run this.
 In the target directory, you will find either a debug or a release directory depending on the build you compiled. Inside that directory, find the file libshopper.dylib and rename it to shopper.so. Move the shopper.so file to where you need to use it and you can import the shared library in Python with
 
 `import shopper`
+
+### Todos
+
+- Make get_itenerary_candidates greedy algorithm select all the stores that have the max, not just one at each step
+- Optimize all of the cloning

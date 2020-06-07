@@ -5,6 +5,7 @@ use super::store::*;
 #[pyclass]
 #[derive(Clone)]
 pub struct Itenerary {
+	#[pyo3(get)]
 	pub stores: Vec<Store>,
 	items_covered: HashSet<String>,
 }

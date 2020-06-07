@@ -13,6 +13,7 @@ use trip::*;
 /**
 	This uses a greedy algorithm to determine which stores in the area to go to.
 	Need to make it automatically stop if we hit five or so stores.
+	This does not take into account if a store shares the same number of items received. Figure that out.
 **/
 
 #[pyfunction]
@@ -34,11 +35,12 @@ fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<S
 
 		for store in stores.iter() {
 			let match_score = store.inventory.intersection(&user_list).cloned().collect::<Vec<String>>().len();
-
-			if match_score == user_list.len() {
+			
+			if match_score == user_list.len() || itenerary.stores.len() >= 4 {
 				let mut i = itenerary.clone();
-				i.add_store(&best_store);
+				i.add_store(&store);
 				itenerary_candidates.push(i);
+				best_store = store.clone();
 
 			} else if match_score > best_match {
 				best_store = store.clone();

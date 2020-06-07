@@ -6,7 +6,9 @@ use std::collections::HashSet;
 #[derive(Clone, Debug)]
 pub struct Store {
 	pub index: usize,
+	#[pyo3(get)]
 	pub id: String,
+	#[pyo3(get)]
 	pub inventory: HashSet<String>,
 }
 
