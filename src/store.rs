@@ -5,6 +5,7 @@ use std::collections::HashSet;
 #[text_signature = "(id, inventory, /)"]
 #[derive(Clone, Debug)]
 pub struct Store {
+	#[pyo3(get, set)]
 	pub index: usize,
 	#[pyo3(get)]
 	pub id: String,
@@ -15,7 +16,9 @@ pub struct Store {
 #[pymethods]
 impl Store {
 	#[new]
-	pub fn new(index: usize, id: String, inventory: HashSet<String>) -> Self {
+	pub fn new(id: String, inventory: HashSet<String>) -> Self {
+		// maybe find a different way of doing this
+		let index = 0;
 		Store { index, id, inventory }
 	}
 }

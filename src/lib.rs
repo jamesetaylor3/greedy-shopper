@@ -30,7 +30,7 @@ fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<S
 	// maybe also use for loop that limits at five stores
 	while user_list.len() != 0 {
 		// need to really figure out a better way to syntatically put this. could use options.
-		let mut best_store: Store = Store::new(0, String::new(), HashSet::new());
+		let mut best_store: Store = Store::new(String::new(), HashSet::new());
 		let mut best_match: usize = 0;
 
 		for store in stores.iter() {
