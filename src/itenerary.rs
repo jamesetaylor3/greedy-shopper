@@ -5,7 +5,7 @@ use super::store::*;
 #[pyclass]
 #[derive(Clone)]
 pub struct Itenerary {
-	stores: Vec<Store>,
+	pub stores: Vec<Store>,
 	items_covered: HashSet<String>,
 }
 
@@ -17,6 +17,7 @@ impl Itenerary {
 		Itenerary { stores, items_covered }
 	}
 
+	#[inline]
 	pub fn add_store(&mut self, store: &Store) {
 		// this desparately needs to be implemented
 		self.stores.push(store.clone());

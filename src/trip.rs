@@ -16,12 +16,14 @@ impl Trip {
 		Trip { path, stops_distance, total_distance }
 	}
 
+	#[inline]
 	pub fn add_stop(&mut self, store_id: String, distance: f64) {
 		self.path.push(store_id);
 		self.stops_distance.push(distance);
 		self.total_distance += distance;
 	}
 
+	#[inline]
 	pub fn add_home_distance(&mut self, distance: f64) {
 		self.stops_distance.push(distance);
 		self.total_distance += distance;

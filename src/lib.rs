@@ -2,8 +2,9 @@ mod store;
 mod itenerary;
 mod trip;
 
-use std::collections::HashSet;
 use pyo3::prelude::*;
+use itertools::Itertools;
+use std::collections::HashSet;
 use pyo3::wrap_pyfunction;
 use store::*;
 use itenerary::*;
@@ -11,6 +12,7 @@ use trip::*;
 
 /**
 	This uses a greedy algorithm to determine which stores in the area to go to.
+	Need to make it automatically stop if we hit five or so stores.
 **/
 
 #[pyfunction]
@@ -52,58 +54,43 @@ fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<S
 }
 
 
-/*
-	This uses navigation by means of a greedy algorithm. Not most efficient way.
-	Because the number of stores with be relatively small (<5), we can use the
-	exact solution to this travelling salesperson problem.
-*/
+/**
+	Solves traveling salesperson problem with brute force. This is okay, because the maximum numbers of
+	stores is five, a highly reasonable amount.
+**/
 
 #[pyfunction]
 #[text_signature = "(itenerary_candidates, matrix, /)"]
-fn solve_trip(itenerary_candidates: Vec<HashSet<Store>>, matrix: Vec<Vec<f64>>) -> PyResult<Trip> {
-	let mut itenerary_candidates = itenerary_candidates;
+fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: Vec<Vec<f64>>) -> PyResult<Trip> {
+	let num_stores = itenerary_candidates.get(0).expect("Need at least one itenerary candidate").stores.len();
+	let home_index = matrix.len() - 1;
 
 	let mut best_trip = Trip::new();
 	best_trip.total_distance = 1000.;  // need better way of doing this
 
-	for iten in itenerary_candidates.iter_mut() {
-		let mut curr_loc_index = matrix.len() - 1;
+	for iten in itenerary_candidates.iter() {
+		for path in iten.stores.iter().combinations(num_stores) {
 
-		let mut trip = Trip::new();
+			let mut curr_loc_index = home_index;
+			let mut trip = Trip::new();
 
-		loop {
-			let mut closest_store = Store::new(0, String::new(), HashSet::new());  // find better way of doing these two lines
-			let mut min_dist = 1000.;
-
-			for store in iten.iter() {
+			for store in path.iter() {
 				let dist = *matrix.get(curr_loc_index).unwrap().get(store.index).unwrap();
-				if dist < min_dist {
-					min_dist = dist;
-					closest_store = store.clone();  // must be cloned to detach immutability reference from iten
-				}
+
+				trip.add_stop(String::from(&store.id), dist);
+
+				curr_loc_index = store.index;
 			}
 
-			trip.add_stop(String::from(&closest_store.id), min_dist);
+			let dist = *matrix.get(curr_loc_index).unwrap().get(home_index).unwrap();
 
-			curr_loc_index = closest_store.index;
+			trip.add_home_distance(dist);
 
-			iten.remove(&closest_store);
-
-			if iten.len() == 0 {
-				trip.add_home_distance(matrix[curr_loc_index][matrix.len() - 1]);
-
-				if best_trip.total_distance > trip.total_distance {
-					best_trip = trip;
-				}
-
-				break;
+			if trip.total_distance < best_trip.total_distance {
+				best_trip = trip;
 			}
 		}
 	}
-
-	println!("{:?}", best_trip);
-
-	println!("{:?}", matrix);
 
 	Ok(best_trip)
 }
