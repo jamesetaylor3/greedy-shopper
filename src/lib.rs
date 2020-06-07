@@ -18,7 +18,8 @@ use trip::*;
 #[pyfunction]
 #[text_signature = "(user_list, stores_py)"]
 fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<Store>>) -> PyResult<Vec<Itenerary>> {
-	let stores: HashSet<Store> = stores_py.iter().map(|s| s.extract().unwrap()).collect();
+	let stores: Vec<Store> = stores_py.iter().map(|s| s.extract().unwrap()).collect();
+
 	let mut user_list = user_list;
 
 	let mut itenerary_candidates: Vec<Itenerary> = Vec::new();
