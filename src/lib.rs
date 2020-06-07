@@ -5,6 +5,7 @@ mod trip;
 use pyo3::prelude::*;
 use itertools::Itertools;
 use std::collections::HashSet;
+use std::collections::HashMap;
 use pyo3::wrap_pyfunction;
 use store::*;
 use itenerary::*;
@@ -64,9 +65,8 @@ fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<S
 
 #[pyfunction]
 #[text_signature = "(itenerary_candidates, matrix, /)"]
-fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: Vec<Vec<f64>>) -> PyResult<Trip> {
+fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: HashMap<String, HashMap<String, f64>>) -> PyResult<Trip> {
 	let num_stores = itenerary_candidates.get(0).expect("Need at least one itenerary candidate").stores.len();
-	let home_index = matrix.len() - 1;
 
 	let mut best_trip = Trip::new();
 	best_trip.total_distance = 1000.;  // need better way of doing this
@@ -74,18 +74,18 @@ fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: Vec<Vec<f64>>) -> Py
 	for iten in itenerary_candidates.iter() {
 		for path in iten.stores.iter().combinations(num_stores) {
 
-			let mut curr_loc_index = home_index;
+			let mut curr_loc = String::from("HOME");
 			let mut trip = Trip::new();
 
 			for store in path.iter() {
-				let dist = *matrix.get(curr_loc_index).unwrap().get(store.index).unwrap();
+				let dist = *matrix.get(&curr_loc).unwrap().get(&store.id).unwrap();
 
 				trip.add_stop(String::from(&store.id), dist);
 
-				curr_loc_index = store.index;
+				curr_loc = store.id.clone();
 			}
 
-			let dist = *matrix.get(curr_loc_index).unwrap().get(home_index).unwrap();
+			let dist = *matrix.get(&curr_loc).unwrap().get("HOME").unwrap();
 
 			trip.add_home_distance(dist);
 
