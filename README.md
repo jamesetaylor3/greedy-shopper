@@ -57,3 +57,7 @@ The trip object has three get-only (no setting!) attributes worth knowing.
 `Trip.stop_times` is an array of floats where the i'th element is the time it will take to get from the store[i - 1] to store[i]. The first element is the time to get from the users current location to the first stop. This array has length of n + 1 because the last element is the time to return home.
 
 `Trip.total_time` is the sum of all elements in `Trip.stop_times`
+
+### License
+
+greedy-shopper is licensed under the [MIT License](https://opensource.org/licenses/MIT). PyO3 is licensed under the [Apache-2.0 license](https://opensource.org/licenses/APACHE-2.0). rust-itertools is licensed under the [MIT License](https://opensource.org/licenses/MIT). Rust is licensed under the [MIT License](https://opensource.org/licenses/MIT). Python is licensed under the [Python License](https://docs.python.org/3.8/license.html).
