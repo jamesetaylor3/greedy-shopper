@@ -14,7 +14,6 @@ use trip::*;
 /**
 	This uses a greedy algorithm to determine which stores in the area to go to.
 	Need to make it automatically stop if we hit five or so stores.
-	This does not take into account if a store shares the same number of items received. Figure that out.
 **/
 
 #[pyfunction]

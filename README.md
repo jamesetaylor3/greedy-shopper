@@ -1,6 +1,6 @@
 # greedy-shopper
 
-This package computes which stores to go to and the best way to complete a trip to both minimize travel time and maximize number of items from the user's list. It uses PyO3 to act as a native Python module. It relies on two greedy algorithms, hence the name: greedy-shopper.
+This package computes which stores to go to and the best way to complete a trip to both minimize travel time and maximize number of items from the user's list. It uses PyO3 to act as a native Python module. It relies on a greedy algorithm, hence the name: greedy-shopper.
 
 ### Install nightly rust
 
@@ -44,10 +44,10 @@ To create a list of possible iteneraries that each has many items as possible wh
 itenerary_candidates = shopper.get_itenerary_candidates(user_list={'Bread', 'Milk'}, stores_py=[store1, store2])
 ```
 
-To find the fastest itenerary and the fastest path out of all of the stores in the itenerary, use the following as a template. It returns a trip object.
+To find the fastest itenerary and the fastest path out of all of the stores in the itenerary, use the following as a template. The parameter, matrix, is a dictionary with nested dictionaries that stores the travel durations between any two places in the itenerary candidates. The matrix must be configured such that `matrix[id1][id2] == matrix[id2][id1]` and evaluates to the travel time between the two stores represented by their respected ids, id1 and id2. The function, solve_trip, returns a trip object.
 
 ```python
-best_trip = shopper.solve_trip(itenerary_candidates)
+best_trip = shopper.solve_trip(itenerary_candidates=itenerary_candidates, matrix=matrix)
 ```
 
 The trip object has three get-only (no setting!) attributes worth knowing.
@@ -56,4 +56,4 @@ The trip object has three get-only (no setting!) attributes worth knowing.
 
 `Trip.stop_times` is an array of floats where the i'th element is the time it will take to get from the store[i - 1] to store[i]. The first element is the time to get from the users current location to the first stop. This array has length of n + 1 because the last element is the time to return home.
 
-`Trip.total_time` is the sum of all element in Trip.stop_time
+`Trip.total_time` is the sum of all elements in `Trip.stop_times`
