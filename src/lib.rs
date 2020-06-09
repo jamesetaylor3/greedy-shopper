@@ -20,41 +20,63 @@ use trip::*;
 #[pyfunction]
 #[text_signature = "(user_list, stores_py)"]
 fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<Store>>) -> PyResult<Vec<Itenerary>> {
-	let stores: Vec<Store> = stores_py.iter().map(|s| s.extract().unwrap()).collect();
-
-	let mut user_list = user_list;
+	let stores: HashSet<Store> = stores_py.iter().map(|s| s.extract().unwrap()).collect();
 
 	let mut itenerary_candidates: Vec<Itenerary> = Vec::new();
 
-	let mut itenerary = Itenerary::new();
+	itenerary_candidates.push(Itenerary::new());
 
-	// maybe also use for loop that limits at five stores
-	while user_list.len() != 0 {
-		// need to really figure out a better way to syntatically put this. could use options.
-		let mut best_store: Store = Store::new(String::new(), HashSet::new());
-		let mut best_match: usize = 0;
+	let mut keepers: Vec<Itenerary> = Vec::new();
 
-		for store in stores.iter() {
-			let match_score = store.inventory.intersection(&user_list).cloned().collect::<Vec<String>>().len();
-			
-			if match_score == user_list.len() || itenerary.stores.len() >= 4 {
-				let mut i = itenerary.clone();
-				i.add_store(&store);
-				itenerary_candidates.push(i);
-				best_store = store.clone();
+	loop {
+		match itenerary_candidates.pop() {
+			Some(iten) => {
+				if iten.stores.len() == 5 {
+					itenerary_candidates.push(iten);
+					break;
+				}
 
-			} else if match_score > best_match {
-				best_store = store.clone();
-				best_match = match_score;
-			}
+				let items_left = user_list.difference(&iten.items_covered).cloned().collect::<HashSet<_>>();
+
+				if items_left.len() == 0 {
+					itenerary_candidates.push(iten);
+					break;
+				}
+
+				let mut best_match: usize = 0;
+
+				for store in stores.difference(&iten.stores).collect::<HashSet<_>>().iter() {
+					let match_score = store.inventory.intersection(&items_left).cloned().collect::<Vec<_>>().len();
+
+					if match_score > best_match {
+						if keepers.len() != 0 {
+							keepers.clear();
+						}
+
+						best_match = match_score;
+
+						let mut i = iten.clone();
+						i.add_store(&store);
+						keepers.push(i);
+
+					} else if match_score == best_match {
+						let mut i = iten.clone();
+						i.add_store(&store);
+						keepers.push(i);
+					}
+				}
+			},
+			None =>  {
+				itenerary_candidates = keepers.clone();
+				keepers.clear();
+			},
 		}
-
-		itenerary.add_store(&best_store);
-
-		user_list = user_list.difference(&best_store.inventory).cloned().collect();
 	}
 
+	println!("{:?}", itenerary_candidates);
+
 	Ok(itenerary_candidates)
+
 }
 
 
@@ -69,7 +91,7 @@ fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: HashMap<String, Hash
 	let num_stores = itenerary_candidates.get(0).expect("Need at least one itenerary candidate").stores.len();
 
 	let mut best_trip = Trip::new();
-	best_trip.total_distance = 1000.;  // need better way of doing this
+	best_trip.total_time = 1000.;  // need better way of doing this
 
 	for iten in itenerary_candidates.iter() {
 		for path in iten.stores.iter().combinations(num_stores) {
@@ -89,7 +111,7 @@ fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: HashMap<String, Hash
 
 			trip.add_home_distance(dist);
 
-			if trip.total_distance < best_trip.total_distance {
+			if trip.total_time < best_trip.total_time {
 				best_trip = trip;
 			}
 		}
