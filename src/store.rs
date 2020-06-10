@@ -4,7 +4,7 @@ use std::hash::{Hash, Hasher};
 
 #[pyclass]
 #[text_signature = "(id, inventory, /)"]
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Store {
 	#[pyo3(get)]
 	pub id: String,

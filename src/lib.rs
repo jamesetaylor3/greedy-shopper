@@ -72,8 +72,6 @@ fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<S
 		}
 	}
 
-	println!("{:?}", itenerary_candidates);
-
 	Ok(itenerary_candidates)
 
 }

@@ -1,7 +1,6 @@
 use pyo3::prelude::*;
 
 #[pyclass]
-#[derive(Debug)]
 pub struct Trip {
 	#[pyo3(get)]
 	pub path: Vec<String>,
