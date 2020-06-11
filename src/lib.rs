@@ -60,11 +60,16 @@ fn get_itenerary_candidates(user_list: Vec<String>, stores_py: Vec<&PyCell<Store
 						i.add_store(&store);
 						keepers.push(i);
 
-					} else if match_score == best_match {
+					} else if match_score == best_match && best_match != 0 {
 						let mut i = iten.clone();
 						i.add_store(&store);
 						keepers.push(i);
 					}
+				}
+
+				if best_match == 0 {
+					itenerary_candidates.push(iten);
+					break;
 				}
 			},
 			None =>  {
