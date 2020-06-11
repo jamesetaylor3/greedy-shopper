@@ -35,13 +35,13 @@ import shopper
 To create a store, use the following as a template. It returs a Store object
 
 ```python
-store1 = shopper.Store(id='5ec9e03ee9c87eab6a737d7b', inventory={'Bread', 'Toilet Paper'})
+store1 = shopper.Store(id='5ec9e03ee9c87eab6a737d7b', inventory=['Bread', 'Toilet Paper'])
 ```
 
 To create a list of possible iteneraries that each has many items as possible while minimizing number of stores, use this as a template. It returns a list of itenerary objects. Each itenerary object is a collection of the stores to go to.
 
 ```python
-itenerary_candidates = shopper.get_itenerary_candidates(user_list={'Bread', 'Milk'}, stores_py=[store1, store2])
+itenerary_candidates = shopper.get_itenerary_candidates(user_list=['Bread', 'Milk'], stores_py=[store1, store2])
 ```
 
 To find the fastest itenerary and the fastest path out of all of the stores in the itenerary, use the following as a template. The parameter, matrix, is a dictionary with nested dictionaries that stores the travel durations between any two places in the itenerary candidates. The matrix must be configured such that `matrix[id1][id2] == matrix[id2][id1]` and evaluates to the travel time between the two stores represented by their respected ids, id1 and id2. The function, solve_trip, returns a trip object.

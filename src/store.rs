@@ -1,5 +1,6 @@
 use pyo3::prelude::*;
 use std::collections::HashSet;
+use std::iter::FromIterator;
 use std::hash::{Hash, Hasher};
 
 #[pyclass]
@@ -15,7 +16,8 @@ pub struct Store {
 #[pymethods]
 impl Store {
 	#[new]
-	pub fn new(id: String, inventory: HashSet<String>) -> Self {
+	pub fn new(id: String, inventory: Vec<String>) -> Self {
+		let inventory: HashSet<String> = HashSet::from_iter(inventory.iter().cloned());
 		Store { id, inventory }
 	}
 }

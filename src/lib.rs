@@ -3,10 +3,11 @@ mod itenerary;
 mod trip;
 
 use pyo3::prelude::*;
+use pyo3::wrap_pyfunction;
 use itertools::Itertools;
 use std::collections::HashSet;
 use std::collections::HashMap;
-use pyo3::wrap_pyfunction;
+use std::iter::FromIterator;
 use store::*;
 use itenerary::*;
 use trip::*;
@@ -18,7 +19,8 @@ use trip::*;
 
 #[pyfunction]
 #[text_signature = "(user_list, stores_py)"]
-fn get_itenerary_candidates(user_list: HashSet<String>, stores_py: Vec<&PyCell<Store>>) -> PyResult<Vec<Itenerary>> {
+fn get_itenerary_candidates(user_list: Vec<String>, stores_py: Vec<&PyCell<Store>>) -> PyResult<Vec<Itenerary>> {
+	let user_list: HashSet<String> = HashSet::from_iter(user_list.iter().cloned());
 	let stores: HashSet<Store> = stores_py.iter().map(|s| s.extract().unwrap()).collect();
 
 	let mut itenerary_candidates: Vec<Itenerary> = Vec::new();
@@ -88,7 +90,7 @@ fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: HashMap<String, Hash
 	let num_stores = itenerary_candidates.get(0).expect("Need at least one itenerary candidate").stores.len();
 
 	let mut best_trip = Trip::new();
-	best_trip.total_time = 1000.;  // need better way of doing this
+	best_trip.total_time = 1000000.;  // need better way of doing this
 
 	for iten in itenerary_candidates.iter() {
 		for path in iten.stores.iter().combinations(num_stores) {
