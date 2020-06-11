@@ -10,7 +10,7 @@ PyO3 requires nightly rust; consequently, greedy-shopper requires nightly rust. 
 
 To set this project to use this nightly channel of rust, run this command in the project directory. It won't affect any of your other projects.
 
-`rustup toolchain set nightly`
+`rustup override set nightly`
 
 ### Build
 
