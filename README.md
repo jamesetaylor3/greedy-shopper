@@ -6,23 +6,38 @@ This package computes which stores to go to and the best way to complete a trip 
 
 PyO3 requires nightly rust; consequently, greedy-shopper requires nightly rust. Assuming you have rustup, run this command to install nightly rust on your machine.
 
-`rustup toolchain install nightly`
+`$ rustup toolchain install nightly`
 
 To set this project to use this nightly channel of rust, run this command in the project directory. It won't affect any of your other projects.
 
-`rustup override set nightly`
+`$ rustup override set nightly`
 
 ### Build
 
 To build the package, run the following command.
 
-`cargo build`
+`$ cargo build`
 
 Alternatively, to build an optimized build, run this.
 
-`cargo build --release`
+`$ cargo build --release`
 
-In the target directory, you will find either a debug or a release directory depending on the build you compiled. Inside that directory, find the file libshopper.dylib and rename it to shopper.so. Move the shopper.so file to where you need to use it.
+In the target directory, you will find either a debug or a release directory depending on the build you compiled. Inside that directory, find the file `libshopper.dylib` and rename it to `shopper.so`. Move this shared library to the directory where you need to use it.
+
+### Build for Linux
+
+The greedy-shopper library's main purpose is to run on AWS Lambda, which requires all shared libraries to be compiled for linux. You can use a linux machine or docker to do this. However, if you use macOS, there is another solution that might save you some time. First you have to configure your toolchain.
+
+```
+$ brew tap SergioBenitez/osxct
+$ brew install x86_64-unknown-linux-gnu
+$ rustup target add x86_64-unknown-linux-gnu
+```
+
+Then you must build with that new target. The binary will be available at `target/x86_64-unknown-linux-gnu/libshopper.so`. Like above, you must rename this to `shopper.so`
+
+`$ cargo build --release --target x86_64-unknown-linux-gnu`
+
 
 ### Usage
 
