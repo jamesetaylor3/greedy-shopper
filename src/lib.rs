@@ -100,7 +100,7 @@ fn solve_trip(itenerary_candidates: Vec<Itenerary>, matrix: HashMap<String, Hash
 	for iten in itenerary_candidates.iter() {
 		for path in iten.stores.iter().combinations(num_stores) {
 
-			let mut curr_loc = String::from("HOME");
+			let mut curr_loc = String::from("CURR");
 			let mut trip = Trip::new();
 
 			for store in path.iter() {
